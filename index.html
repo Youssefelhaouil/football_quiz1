@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Football Quiz</title>
+  <style>
+    body{
+      background-color:ghostwhite;
+    }
+    .quiz-container {
+
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-top: 30px;
+      background-color: rgb(239, 246, 253);
+    }
+
+    .question {
+      font-size: 18px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat( auto-fit, minmax(250px, 1fr) );
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .welcome-page {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .welcome-page button {
+      width: 150px;
+      height: 30px;
+      border-radius: 10px;
+      background-color: transparent;
+    }
+
+    .welcome-page button:hover {
+      background-color: rgb(182, 243, 243);
+
+    }
+
+    .welcome-page .first {
+      display: flex;
+    }
+
+    img {
+      max-width: 100px;
+      max-height: 100px;
+      margin-right: 10px;
+    }
+
+    .result-page h2 {
+      text-align: center;
+      color: rgb(5, 78, 100);
+      font-size: 50px;
+    }
+
+    .result-page p {
+      text-align: center;
+      color: rgb(7, 7, 7);
+      font-size: 40px;
+    }
+
+    .result-page p #timer {
+      text-align: center;
+      color: rgb(230, 45, 45);
+      font-size: 40px;
+    }
+
+    .result-page button {
+      margin: auto;
+      width: 150px;
+      height: 30px;
+      border-radius: 10px;
+      background-color: transparent;
+    }
+
+    .result-page button:hover {
+      background-color: rgb(151, 214, 233);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="welcome-page">
+    <div class="first">
+      <h1>Welcome to the Football Quiz!</h1>
+      <image src="image/quiz.png" alt="">
+    </div>
+
+    <button onclick="startQuiz()">Start Quiz</button>
+  </div>
+  <div class="quiz-container" style="display: none;"></div>
+  <div class="result-page" style="display: none;">
+    <h2>Quiz Result</h2>
+    <p id="result"></p>
+    <p id="timer" style="position: absolute; top: 10px; left: 10px;"></p>
+    <button id="tryAgainBtn" style="display: none;" onclick="tryAgain()">Try Again</button>
+  </div>
+
+
+
+  <script>
+    const quizData = [
+      {
+        question: "Which player has won the most Golden BOOT awards?",
+        options: [
+          { text: "messi", isCorrect: true, image: "image/messi.png" },
+          { text: "C.Ronaldo", isCorrect: false, image: "image/cr7.png" },
+          { text: " Pele", isCorrect: false, image: "image/pele.png" },
+          { text: "Maradona", isCorrect: false, image: "image/maradona.png" }
+        ]
+      },
+      {
+        question: "Which country won the FIFA World Cup in 2018",
+        options: [
+          { text: "Argentina", isCorrect: false, image: "image/argentina.png" },
+          { text: "France", isCorrect: true, image: "image/france.png" },
+          { text: "Croatia", isCorrect: false, image: "image/croatia.png" },
+          { text: "Brazil", isCorrect: false, image: "image/brazil.png" }
+        ]
+      },
+      {
+        question: "Which club has won the most UEFA Champions League titles?",
+        options: [
+          { text: "Barcelona", isCorrect: false, image: "image/barcel.png" },
+          { text: "MAN CITY", isCorrect: false, image: "image/city.png" },
+          { text: "Real Madrid", isCorrect: true, image: "image/real.png" },
+          { text: "Ac milan", isCorrect: false, image: "image/acm.png" }
+        ]
+      },
+      {
+        question: "In football, what is the maximum number of players allowed on the field per team during a match?",
+        options: [
+          { text: "11", isCorrect: true, image: "image/player.png" },
+          { text: "9", isCorrect: false, image: "image/player.png" },
+          { text: "10", isCorrect: false, image: "image/player.png" },
+          { text: "13", isCorrect: false, image: "image/player.png" }
+        ]
+      },
+      {
+        question: "Which club has won the most premier leagues titles?",
+        options: [
+          { text: "liverpool", isCorrect: false, image: "image/liver.png" },
+          { text: "man city", isCorrect: false, image: "image/city.png" },
+          { text: "arsenal", isCorrect: false, image: "image/arsenal.png" },
+          { text: "man united", isCorrect: true, image: "image/unt.png" }
+        ]
+      },
+      {
+        question: "Who is the top scorer in the history of the English Premier League?",
+        options: [
+          { text: "Wayne Rooney", isCorrect: false, image: "image/rooney.png" },
+          { text: "Alan Shearer", isCorrect: true, image: "image/sherar.png" },
+          { text: "Cristiano Ronaldo", isCorrect: false, image: "image/cr7_2.png" },
+          { text: "Thierry Henry", isCorrect: false, image: "image/henry.png" }
+        ]
+      },
+      {
+        question: "Which player has won the most Ballon d'Or awards?",
+        options: [
+          { text: "Messi", isCorrect: true, image: "image/messi.png" },
+          { text: "CR7", isCorrect: false, image: "image/cr7.png" },
+          { text: "Ronaldo Nazario", isCorrect: false, image: "image/ronaldo.png" },
+          { text: "zidane", isCorrect: false, image: "image/zidane.png" }
+        ]
+      },
+      {
+        question: "Who is known as The Special One in football?",
+        options: [
+          { text: "guardiola", isCorrect: false, image: "image/guardiola.png" },
+          { text: "ancelloti", isCorrect: false, image: "image/anceloti.png" },
+          { text: "mourinho", isCorrect: true, image: "image/morinho.png" },
+          { text: "alex ferguson", isCorrect: false, image: "image/sir-alex-ferguson.png" }
+        ]
+      },
+      {
+        question: "Who is the youngest player to have ever scored a goal in the FIFA World Cup?",
+        options: [
+          { text: "pele", isCorrect: true, image: "image/pele.png" },
+          { text: "maradona", isCorrect: false, image: "image/maradona.png" },
+          { text: "mbappe", isCorrect: false, image: "image/mbape.png" },
+          { text: "messi", isCorrect: false, image: "image/messi.png" }
+        ]
+      },
+      {
+        question: "Which football club has the nickname The Red Devils?",
+        options: [
+          { text: "ac milan", isCorrect: false, image: "image/AC_MILAN.png" },
+          { text: "man united", isCorrect: true, image: "image/unt.png" },
+          { text: "barcelona", isCorrect: false, image: "image/barcel.png" },
+          { text: "bayern munich", isCorrect: false, image: "image/bayern.png" }
+        ]
+      }
+    ];
+
+    const welcomePage = document.querySelector('.welcome-page');
+    const quizContainer = document.querySelector('.quiz-container');
+    const resultPage = document.querySelector('.result-page');
+    const resultElement = document.getElementById('result');
+    let score = 0;
+    let startTime, endTime;
+
+    function loadQuestion(questionIndex) {
+      const currentQuestion = quizData[questionIndex];
+      const optionsHTML = currentQuestion.options.map(option => `
+        <div class="option" data-index="${questionIndex}" data-is-correct="${option.isCorrect}">
+          <img src=${option.image} alt="${option.text}">
+          ${option.text}
+        </div>
+      `).join('');
+
+      const questionHTML = `
+        <div class="question">${currentQuestion.question}</div>
+        <div class="options">${optionsHTML}</div>
+      `;
+
+      quizContainer.innerHTML = questionHTML;
+
+      const options = document.querySelectorAll('.option');
+      options.forEach(option => {
+        option.addEventListener('click', handleClick, { once: true }); // Adding once:true to remove event listener after one click
+      });
+
+      if (questionIndex === 0) {
+        startTimer();
+      }
+
+      if (questionIndex === quizData.length - 1) {
+        endQuiz();
+      }
+    }
+
+    function handleClick() {
+      const isCorrect = this.getAttribute('data-is-correct') === 'true';
+      if (isCorrect) {
+        score++;
+        this.style.backgroundColor = '#006f3c';
+      } else {
+        this.style.backgroundColor = '#bf212f';
+      }
+
+      const options = document.querySelectorAll('.option');
+      options.forEach(option => {
+        option.removeEventListener('click', handleClick); // Remove event listener from all options
+      });
+
+
+      setTimeout(() => {
+        const nextQuestionIndex = parseInt(this.getAttribute('data-index')) + 1;
+        if (nextQuestionIndex < quizData.length) {
+          loadQuestion(nextQuestionIndex);
+        } else {
+          resultPage.style.display = 'block';
+          quizContainer.style.display = 'none';
+          resultElement.textContent = `Quiz finished! Your score is ${score}/${quizData.length}`;
+        }
+        if (score > 5) {
+            tryAgainBtn.style.display = 'none';
+          }else{
+            tryAgainBtn.style.display = 'block';
+          }
+      }, 1000);
+    }
+
+    function tryAgain() {
+      resultPage.style.display = 'none';
+      welcomePage.style.display = 'flex';
+      score = 0;
+    }
+
+    function startQuiz() {
+      welcomePage.style.display = 'none';
+      quizContainer.style.display = 'block';
+      startTime = new Date();
+      loadQuestion(0);
+      startTimer();
+    }
+
+    function endQuiz() {
+      endTime = new Date();
+      const elapsedSeconds = Math.floor((endTime - startTime) / 1000);
+      const minutes = Math.floor(elapsedSeconds / 60);
+      const seconds = elapsedSeconds % 60;
+      const timeTaken = `${minutes} minutes ${seconds} seconds`;
+      resultPage.style.display = 'block';
+      quizContainer.style.display = 'none';
+      timer.style.display = "none";
+      resultElement.textContent = `Quiz finished! Your score is ${score}/${quizData.length -1}. Time taken: ${timeTaken}`;
+    }
+
+    function startTimer() {
+      let seconds = 0;
+      const timerElement = document.getElementById('timer');
+      timerElement.textContent = '00:00';
+
+      function pad(val) {
+        return val > 9 ? val : "0" + val;
+      }
+
+      setInterval(() => {
+        seconds++;
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        timerElement.textContent = `${pad(minutes)}:${pad(remainingSeconds)}`;
+      }, 1000);
+    }
+  </script>
+</body>
+
+</html>
